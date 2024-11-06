@@ -2,14 +2,14 @@
 
 #include "ll/api/mod/NativeMod.h"
 
-namespace my_mod {
+namespace join_location {
 
-class MyMod {
+class Entry {
 
 public:
-    static MyMod& getInstance();
+    static Entry& getInstance();
 
-    MyMod(ll::mod::NativeMod& self) : mSelf(self) {}
+    Entry(ll::mod::NativeMod& self) : mSelf(self) {}
 
     [[nodiscard]] ll::mod::NativeMod& getSelf() const { return mSelf; }
 
@@ -30,4 +30,4 @@ private:
     ll::mod::NativeMod& mSelf;
 };
 
-} // namespace my_mod
+} // namespace join_location

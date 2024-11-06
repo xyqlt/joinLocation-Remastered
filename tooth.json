@@ -1,11 +1,11 @@
 {
     "format_version": 2,
-    "tooth": "my-mod",
+    "tooth": "joinLocation",
     "version": "0.0.0",
     "info": {
-        "name": "My Mod Name",
-        "description": "My Mod Description",
-        "author": "My Name",
+        "name": "joinLocation",
+        "description": "查询ip地址",
+        "author": "xyqlt",
         "tags": [
             "platform:levilamina",
             "type:mod"
@@ -13,13 +13,13 @@
     },
     "asset_url": "My Asset Url",
     "prerequisites": {
-        "github.com/LiteLDev/LeviLamina": "My LeviLamina Dependency Version"
+        "github.com/LiteLDev/LeviLamina": "0.13.5"
     },
     "files": {
         "place": [
             {
-                "src": "my-mod/*",
-                "dest": "plugins/my-mod/"
+                "src": "mod/*",
+                "dest": "plugins/mod/"
             }
         ]
     }
