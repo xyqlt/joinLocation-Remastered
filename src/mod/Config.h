@@ -9,14 +9,10 @@ struct PlayerConfig {
     bool                     disabledNotice = false; // 是否禁用通知
     bool                     display        = false; // 是否显示通知
     bool                     isCached       = false; // 是否缓存
+    std::string              ip              = "";   // IP
     std::string              realName       = "";    // 真实名称
     std::string              deviceName     = "";    // 设备名称
     std::vector<std::string> location; // 位置依次是[省份，地级市，县镇，运营商]
-    bool                     operator==(const PlayerConfig& rhs) const {
-        return this->realName == rhs.realName && this->deviceName == rhs.deviceName && this->location == rhs.location
-            && this->isCached == rhs.isCached && this->disabledNotice == rhs.disabledNotice
-            && this->display == rhs.display;
-    }
 };
 struct Config {
     int                                         version      = 1;              // 配置文件版本
