@@ -1,5 +1,6 @@
 #include "mod/Entry.h"
 
+#include "Config.h"
 #include "Entry.h"
 #include "Global.h"
 
@@ -7,6 +8,7 @@
 #include <ll/api/mod/RegisterHelper.h>
 #include <memory>
 join_location::Config config;
+join_location::Data data;
 ll::Logger            logger("joinLocation");
 namespace join_location {
 
@@ -17,17 +19,17 @@ Entry& Entry::getInstance() { return *instance; }
 bool Entry::load() {
     getSelf().getLogger().debug("Loadding config...");
     auto path = getSelf().getConfigDir() / "config.json";
+    auto path2 = getSelf().getConfigDir() / "playerConfig.json";
+    
     try {
         ll::config::loadConfig(config, path);
-        auto                   defaultConfig = join_location::PlayerConfig();
-        std::vector<mce::UUID> removes;
-        for (auto& item : config.playerConfigs) {
-            if (item.second == defaultConfig) removes.push_back(item.first);
-        }
-        for (auto& item : removes) config.playerConfigs.erase(item);
-    } catch (...) {}
+        ll::config::loadConfig(data, path2);
+    } catch (const std::exception& e) {
+        logger.error("Failed to load config: {}", e.what());
+        return false;
+    }
     ll::config::saveConfig(config, path);
-    logger.info(fmt::format(fmt::fg(fmt::color::pink), "模组JoinLocation重制版已加载！\n版本：{}", VERSION.to_string())
+    logger.info(fmt::format(fmt::fg(fmt::color::pink), "模组JoinLocation重制版已加载！版本：{}", VERSION.to_string())
     );
     return true;
 }

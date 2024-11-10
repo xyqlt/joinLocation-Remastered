@@ -1,3 +1,4 @@
+#include "Config.h"
 #include "Entry.h"
 #include "Global.h"
 #include <ll/api/Config.h>
@@ -16,13 +17,10 @@
 #include <mc/world/events/BossEventUpdateType.h>
 #include <mc/world/level/Level.h>
 
-
 extern void setPlayerConfig(mce::UUID& uuid, join_location::PlayerConfig& playerConfig) {
-    auto oldPlayerConfig = config.playerConfigs[uuid];
+    auto oldPlayerConfig = data.playerConfigs[uuid];
     auto level           = ll::service::getLevel();
     if (!level.has_value()) return;
-    auto* player               = level->getPlayer(uuid);
-    config.playerConfigs[uuid] = playerConfig;
-    ll::config::saveConfig(config, join_location::Entry::getInstance().getSelf().getConfigDir() / "config.json");
-    if (player == nullptr) return;
+    data.playerConfigs[uuid] = playerConfig;
+    ll::config::saveConfig(data, join_location::Entry::getInstance().getSelf().getConfigDir() / "playerConfig.json");
 }

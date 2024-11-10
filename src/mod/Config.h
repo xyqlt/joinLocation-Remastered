@@ -25,6 +25,10 @@ struct Config {
     bool                                        enabledPAPI  = true;           // 注册PAPI变量
     bool                                        enabledToast = true;           // 显示通知
     bool                                        enabledChat  = true;           // 显示在聊天栏
+    
+};
+struct Data {
+    int                                        version      = 1;                // 数据文件版本
     std::unordered_map<mce::UUID, PlayerConfig> playerConfigs;                 // 玩家配置
 };
 } // namespace join_location

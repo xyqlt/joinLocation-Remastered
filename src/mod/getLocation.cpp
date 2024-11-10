@@ -1,4 +1,5 @@
 #include "Global.h"
+#include "mc/deps/core/mce/UUID.h"
 #include "nlohmann/json_fwd.hpp"
 #include <httplib.h>
 #include <nlohmann/json.hpp>
@@ -69,22 +70,29 @@ bool HttpGet(
 bool HttpGet(const std::string& url, const std::function<void(int, std::string)>& callback, int timeout = -1) {
     return HttpGet(url, {}, callback, timeout);
 }
-void safeCallback(const std::function<void(std::vector<std::string>)>& callback, const std::vector<std::string>& result) {
+void safeCallback(const std::function<void(std::vector<std::string>, mce::UUID&)>& callback, const std::vector<std::string>& result, const mce::UUID& uuidA) {
     static std::mutex mutex;
     std::lock_guard<std::mutex> lock(mutex);
 
     if (callback) {
-        callback(result);
+        try {
+            mce::UUID uuidCopy = uuidA;  // 创建副本
+            callback(result, uuidCopy);
+        } catch (const std::exception& e) {
+            logger.error("Exception in callback: {}", e.what());
+        } catch (...) {
+            logger.error("Unknown exception in callback!");
+        }
     } else {
-        logger.error("Callback is nullptr!");
+        logger.error("Callback is nullptr! UUID: {}", uuidA.asString());
         return;
     }
 }
-void getLocation(std::string ip, const std::function<void(std::vector<std::string>)>& callback) {
+void getLocation(std::string ip, const std::function<void(std::vector<std::string>,mce::UUID& uuid)>& callback,const mce::UUID& uuidA) {
     string url = "https://mesh.if.iqiyi.com/aid/ip/info?version=1.1.1&ip=" + ip;
     HttpGet(
         url,
-        [callback](int code, std::string body) {
+        [callback,uuidA](int code, std::string body) {
             std::vector<std::string> result;
             // logger.warn("callback called");
             // logger.info("Body:" + body);
@@ -125,14 +133,14 @@ void getLocation(std::string ip, const std::function<void(std::vector<std::strin
                         }
                         logger.info("result:" + result[0] + " " + result[1] + " " + result[2] + " " + result[3]);
                         
-                        safeCallback(callback,result);
+                        safeCallback(callback,result,uuidA);
                     } catch (const std::exception& e) {
                         logger.error("Error processing JSON data: " + std::string(e.what()));
-                        safeCallback(callback,{});
+                        safeCallback(callback,{},uuidA);
                     }
                 }
             } else {
-                safeCallback(callback,{});
+                safeCallback(callback,{},uuidA);
             }
         },
         3000
