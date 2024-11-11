@@ -18,9 +18,9 @@
 #include <mc/world/level/Level.h>
 
 extern void setPlayerConfig(mce::UUID& uuid, join_location::PlayerConfig& playerConfig) {
-    auto oldPlayerConfig = data.playerConfigs[uuid];
+    auto oldPlayerConfig = playerData.playerConfigs[uuid];
     auto level           = ll::service::getLevel();
     if (!level.has_value()) return;
-    data.playerConfigs[uuid] = playerConfig;
-    ll::config::saveConfig(data, join_location::Entry::getInstance().getSelf().getConfigDir() / "playerConfig.json");
+    playerData.playerConfigs[uuid] = playerConfig;
+    ll::config::saveConfig(playerData, join_location::Entry::getInstance().getSelf().getConfigDir() / "playerConfig.json");
 }

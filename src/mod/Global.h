@@ -10,11 +10,12 @@
 
 extern ll::Logger     logger;
 extern join_location::Config config;
-extern join_location::Data data;
+extern join_location::Data playerData;
 extern void ListenerCall(bool enable);
 extern void getLocation(std::string ip, const std::function<void(std::vector<std::string>,mce::UUID& uuid)>& callback,const mce::UUID& uuidA);
 extern std::pair<std::string,std::string> SplitIpPort(const std::string& ipAndPort);
 extern std::string getPlayerDeviceName(mce::UUID& uuid);
+extern bool displayNotice(mce::UUID& uuid);
 //extern void registerCommands();
 extern void setPlayerConfig(mce::UUID& uuid, join_location::PlayerConfig& playerConfig);
 ///extern void PapiCall(bool enable);

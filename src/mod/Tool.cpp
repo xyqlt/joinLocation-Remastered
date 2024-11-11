@@ -6,7 +6,6 @@
 #include <ll/api/utils/StringUtils.h>
 #include <string>
 #include <unordered_map>
-#include <vector>
 
 
 #include <ll/api/Config.h>

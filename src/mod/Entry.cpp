@@ -8,7 +8,7 @@
 #include <ll/api/mod/RegisterHelper.h>
 #include <memory>
 join_location::Config config;
-join_location::Data data;
+join_location::Data playerData;
 ll::Logger            logger("joinLocation");
 namespace join_location {
 
@@ -23,7 +23,7 @@ bool Entry::load() {
     
     try {
         ll::config::loadConfig(config, path);
-        ll::config::loadConfig(data, path2);
+        ll::config::loadConfig(playerData, path2);
     } catch (const std::exception& e) {
         logger.error("Failed to load config: {}", e.what());
         return false;

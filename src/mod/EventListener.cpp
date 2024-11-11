@@ -30,7 +30,6 @@
 #include <mc/world/level/Level.h>
 
 
-
 #include <mc/deps/application/AppPlatform.h>
 #include <mc/entity/utilities/ActorType.h>
 #include <mc/server/commands/CommandContext.h>
@@ -44,7 +43,7 @@ void                   saveResults(std::vector<std::string> results, mce::UUID& 
     auto level = ll::service::getLevel();
     if (!level.has_value()) return;
     auto* player                             = level->getPlayer(uuid);
-    auto& playerConfig                       = data.playerConfigs;
+    auto& playerConfig                       = playerData.playerConfigs;
     playerConfig[uuid.asString()].location   = results;
     playerConfig[uuid.asString()].realName   = player->getRealName();
     playerConfig[uuid.asString()].deviceName = getPlayerDeviceName(uuid);
@@ -61,15 +60,23 @@ void ListenerCall(bool enable) {
             auto name       = event.self().getRealName();
             auto ipAndPort  = event.self().getIPAndPort();
             auto deviceName = getPlayerDeviceName(uuid);
-            if (data.playerConfigs[uuid].ip != SplitIpPort(ipAndPort).first
-                || data.playerConfigs[uuid].deviceName != deviceName || data.playerConfigs[uuid].realName != name) {
+            if (config.enableCache) {
+                if (playerData.playerConfigs[uuid].isCached) {
+                    logger.warn("玩家{}信息没有缓存,正在更新...", name);
+                    getLocation(playerData.playerConfigs[uuid].ip, saveResults, uuid);
+                    displayNotice(uuid);
+                } else if (playerData.playerConfigs[uuid].ip != SplitIpPort(ipAndPort).first
+                           || playerData.playerConfigs[uuid].deviceName != deviceName
+                           || playerData.playerConfigs[uuid].realName != name) {
                     logger.warn("玩家{}信息发生变化正在更新...", name);
                     getLocation(SplitIpPort(ipAndPort).first, saveResults, uuid);
-                }else{
-                    
+                    displayNotice(uuid);
+                } else {
+                    displayNotice(uuid);
                 }
-            
-            // setPlayerConfig(uuid,)
+            }else{
+
+            }
         });
     } else {
         eventBus.removeListener(joinEventListener);
