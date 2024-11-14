@@ -14,7 +14,7 @@
 #include <mc/world/actor/player/Player.h>
 #include <mc/world/level/Level.h>
 namespace Action {
-enum Type{ url , name };
+enum Type { url, name };
 struct Commands {
     Type        type;
     std::string url;
@@ -52,7 +52,7 @@ void registerCommands() {
                 return output.error("控制台不支持此命令");
             }
             auto* player = static_cast<Player*>(entity);
-            auto uuid = player->getUuid();
+            auto  uuid   = player->getUuid();
             sendPlayerForm(uuid);
         }
     );

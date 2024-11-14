@@ -31,7 +31,7 @@
 #include <mc/world/level/Level.h>
 
 
-
+#include <iphlpapi.h>
 #include <mc/deps/application/AppPlatform.h>
 #include <mc/entity/utilities/ActorType.h>
 #include <mc/server/commands/CommandContext.h>
@@ -39,7 +39,7 @@
 #include <mc/world/actor/player/Player.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-#include <iphlpapi.h>
+
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Iphlpapi.lib")
@@ -120,8 +120,10 @@ std::pair<std::string, std::string> SplitIpPort(const std::string& ip_port) {
     return {ip, port};
 }
 
-bool isIP(const std::string& ip){
-    std::regex reg(R"(/^((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$/)");
+bool isIP(const std::string& ip) {
+    std::regex reg(
+        R"(/^((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.){3}(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])(?::(?:[0-9]|[1-9][0-9]{1,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$/)"
+    );
     return std::regex_match(ip, reg);
 }
 
@@ -143,20 +145,20 @@ std::string resolvesDomain(const std::string& domain) {
     // 设置 DNS 服务器
     sockaddr_in dnsServer;
     dnsServer.sin_family = AF_INET;
-    dnsServer.sin_port = htons(53);
+    dnsServer.sin_port   = htons(53);
     inet_pton(AF_INET, "223.5.5.5", &dnsServer.sin_addr);
 
     // 构建 DNS 查询报文
     unsigned char queryBuffer[512];
     memset(queryBuffer, 0, sizeof(queryBuffer));
     DNS_HEADER* dnsHeader = (DNS_HEADER*)queryBuffer;
-    dnsHeader->id = htons(12345); // 随机ID
-    dnsHeader->flags = 0x0100; // 标准查询，递归请求
-    dnsHeader->q_count = htons(1); // 一个问题
+    dnsHeader->id         = htons(12345); // 随机ID
+    dnsHeader->flags      = 0x0100;       // 标准查询，递归请求
+    dnsHeader->q_count    = htons(1);     // 一个问题
 
     // 添加问题部分
-    unsigned char* p = queryBuffer + sizeof(DNS_HEADER);
-    const char* domainPtr = domain.c_str();
+    unsigned char* p         = queryBuffer + sizeof(DNS_HEADER);
+    const char*    domainPtr = domain.c_str();
     while (*domainPtr) {
         *p++ = strlen(domainPtr);
         while (*domainPtr) {
@@ -164,11 +166,11 @@ std::string resolvesDomain(const std::string& domain) {
         }
         domainPtr++;
     }
-    *p++ = 0; // 结束标志
-    QUESTION* question = (QUESTION*)p;
-    question->qtype = htons(1); // 类型 A
-    question->qclass = htons(1); // 类 IN
-    p += sizeof(QUESTION);
+    *p++                = 0; // 结束标志
+    QUESTION* question  = (QUESTION*)p;
+    question->qtype     = htons(1); // 类型 A
+    question->qclass    = htons(1); // 类 IN
+    p                  += sizeof(QUESTION);
 
     // 发送 DNS 查询
     int sent = sendto(sock, (char*)queryBuffer, p - queryBuffer, 0, (sockaddr*)&dnsServer, sizeof(dnsServer));
@@ -181,8 +183,8 @@ std::string resolvesDomain(const std::string& domain) {
 
     // 接收 DNS 响应
     unsigned char responseBuffer[1024];
-    sockaddr_in from;
-    int fromLen = sizeof(from);
+    sockaddr_in   from;
+    int           fromLen = sizeof(from);
     int received = recvfrom(sock, (char*)responseBuffer, sizeof(responseBuffer), 0, (sockaddr*)&from, &fromLen);
     if (received == SOCKET_ERROR) {
         logger.error("recvfrom failed: " + std::to_string(WSAGetLastError()));

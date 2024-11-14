@@ -27,7 +27,7 @@ bool sendPlayerForm(mce::UUID& uuid) {
         form.appendDropdown("playerDropDown", "选择玩家", playerMaps);
         form.appendInput("url", "输入IP地址或域名");
         form.appendToggle("enableCache", "是否以缓存查询");
-        form.appendToggle("enableQueryip", "是否以url查询");
+        form.appendToggle("enableQueryUrl", "是否以url查询");
         form.sendTo(
             *player,
             [](Player& player, ll::form::CustomFormResult const& result, ll::form::FormCancelReason reason) -> void {
@@ -35,7 +35,6 @@ bool sendPlayerForm(mce::UUID& uuid) {
                     player.sendMessage("§c表单已放弃");
                     return;
                 }
-                
             }
         );
 
