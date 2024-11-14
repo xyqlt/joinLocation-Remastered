@@ -217,9 +217,24 @@ bool displayNotice(mce::UUID& uuid) {
     level->forEachPlayer([&](Player& player) -> bool {
         if (!playerData.playerConfigs[player.getUuid()].disabledNotice) {
             logger.info("Display notice to {}", player.getRealName());
-            ToastRequestPacket pkt = ToastRequestPacket(
-                fmt::format("§e{}加入了服务器~", playerName),
-                fmt::format(
+            if (config.enabledToast) {
+                ToastRequestPacket pkt = ToastRequestPacket(
+                    fmt::format("§e{}加入了服务器~", playerName),
+                    fmt::format(
+                        "§e欢迎来自 §c{}§b{}§g{}§5{}§7({}) §e的§4{}§e玩家§a {} §e 加入服务器~",
+                        playerLocation[0],
+                        playerLocation[1],
+                        playerLocation[2],
+                        playerLocation[3],
+                        playerLocation[4],
+                        playerDeviceName,
+                        playerName
+                    )
+                );
+                player.sendNetworkPacket(pkt);
+            }
+            if (config.enabledChat) {
+                player.sendMessage(fmt::format(
                     "§e欢迎来自 §c{}§b{}§g{}§5{}§7({}) §e的§4{}§e玩家§a {} §e 加入服务器~",
                     playerLocation[0],
                     playerLocation[1],
@@ -228,19 +243,8 @@ bool displayNotice(mce::UUID& uuid) {
                     playerLocation[4],
                     playerDeviceName,
                     playerName
-                )
-            );
-            player.sendNetworkPacket(pkt);
-            player.sendMessage(fmt::format(
-                "§e欢迎来自 §c{}§b{}§g{}§5{}§7({}) §e的§4{}§e玩家§a {} §e 加入服务器~",
-                playerLocation[0],
-                playerLocation[1],
-                playerLocation[2],
-                playerLocation[3],
-                playerLocation[4],
-                playerDeviceName,
-                playerName
-            ));
+                ));
+            }
             return true;
         }
         return false;

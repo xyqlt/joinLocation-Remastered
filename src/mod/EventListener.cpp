@@ -50,6 +50,8 @@ void                   saveResults(std::vector<std::string> results, mce::UUID& 
     playerConfig[uuid.asString()].ip         = SplitIpPort(player->getIPAndPort()).first;
     playerConfig[uuid.asString()].isCached   = true;
     setPlayerConfig(uuid, playerConfig[uuid.asString()]);
+    logger.info("玩家{}位置信息已缓存", player->getRealName());
+    displayNotice(uuid);
 }
 void ListenerCall(bool enable) {
     auto& eventBus = ll::event::EventBus::getInstance();
@@ -61,16 +63,16 @@ void ListenerCall(bool enable) {
             auto ipAndPort  = event.self().getIPAndPort();
             auto deviceName = getPlayerDeviceName(uuid);
             if (config.enableCache) {
-                if (playerData.playerConfigs[uuid].isCached) {
+                if (!playerData.playerConfigs[uuid].isCached) {
                     logger.warn("玩家{}信息没有缓存,正在更新...", name);
                     getLocation(playerData.playerConfigs[uuid].ip, saveResults, uuid);
-                    displayNotice(uuid);
+                    
                 } else if (playerData.playerConfigs[uuid].ip != SplitIpPort(ipAndPort).first
                            || playerData.playerConfigs[uuid].deviceName != deviceName
                            || playerData.playerConfigs[uuid].realName != name) {
                     logger.warn("玩家{}信息发生变化正在更新...", name);
                     getLocation(SplitIpPort(ipAndPort).first, saveResults, uuid);
-                    displayNotice(uuid);
+                    
                 } else {
                     displayNotice(uuid);
                 }

@@ -17,10 +17,24 @@
 #include <mc/world/events/BossEventUpdateType.h>
 #include <mc/world/level/Level.h>
 
-extern void setPlayerConfig(mce::UUID& uuid, join_location::PlayerConfig& playerConfig) {
+void setPlayerConfig(mce::UUID& uuid, join_location::PlayerConfig& playerConfig) {
     auto oldPlayerConfig = playerData.playerConfigs[uuid];
     auto level           = ll::service::getLevel();
     if (!level.has_value()) return;
     playerData.playerConfigs[uuid] = playerConfig;
-    ll::config::saveConfig(playerData, join_location::Entry::getInstance().getSelf().getConfigDir() / "playerConfig.json");
+    ll::config::saveConfig(
+        playerData,
+        join_location::Entry::getInstance().getSelf().getConfigDir() / "playerConfig.json"
+    );
+}
+void setGlobalConfig(join_location::Config newConfig) {
+    config.version               = newConfig.version;
+    config.enableCache           = newConfig.enableCache;
+    config.enableRegisterCommand = newConfig.enableRegisterCommand;
+    config.enabledChat           = newConfig.enabledChat;
+    config.enabledPAPI           = newConfig.enabledPAPI;
+    config.enabledToast          = newConfig.enabledToast;
+    config.alias                 = newConfig.alias;
+    config.command               = newConfig.command;
+    ll::config::saveConfig(config, join_location::Entry::getInstance().getSelf().getConfigDir() / "config.json");
 }

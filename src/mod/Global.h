@@ -16,6 +16,11 @@ extern void getLocation(std::string ip, const std::function<void(std::vector<std
 extern std::pair<std::string,std::string> SplitIpPort(const std::string& ipAndPort);
 extern std::string getPlayerDeviceName(mce::UUID& uuid);
 extern bool displayNotice(mce::UUID& uuid);
-//extern void registerCommands();
+extern void registerCommands();
 extern void setPlayerConfig(mce::UUID& uuid, join_location::PlayerConfig& playerConfig);
-///extern void PapiCall(bool enable);
+extern bool sendConfigForm(mce::UUID& uuid);
+extern bool sendPlayerForm(mce::UUID& uuid);
+extern void setGlobalConfig(join_location::Config config);
+extern std::string resolvesDomain(const std::string& domain);
+extern bool isIP(const std::string& ip);
+//extern void PapiCall(bool enable);

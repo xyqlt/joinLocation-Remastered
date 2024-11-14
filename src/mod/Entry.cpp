@@ -1,3 +1,4 @@
+#pragma once
 #include "mod/Entry.h"
 
 #include "Config.h"
@@ -37,7 +38,7 @@ bool Entry::load() {
 bool Entry::enable() {
     getSelf().getLogger().debug("Enabling...");
     ListenerCall(true);
-    // registerCommands();
+    if(config.enableRegisterCommand) registerCommands();
     // if (config.enabledPAPI) PapiCall(true);
     return true;
 }
