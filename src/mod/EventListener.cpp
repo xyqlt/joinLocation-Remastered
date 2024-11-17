@@ -43,7 +43,7 @@ void                   saveResults(std::vector<std::string> results, mce::UUID& 
     auto level = ll::service::getLevel();
     if (!level.has_value()) return;
     auto* player                             = level->getPlayer(uuid);
-    auto& playerConfig                       = playerData.playerConfigs;
+    auto& playerConfig                       = Gdata.playerConfigs;
     playerConfig[uuid.asString()].location   = results;
     playerConfig[uuid.asString()].realName   = player->getRealName();
     playerConfig[uuid.asString()].deviceName = getPlayerDeviceName(uuid);
@@ -63,13 +63,13 @@ void ListenerCall(bool enable) {
             auto ipAndPort  = event.self().getIPAndPort();
             auto deviceName = getPlayerDeviceName(uuid);
             if (config.enableCache) {
-                if (!playerData.playerConfigs[uuid].isCached) {
+                if (!Gdata.playerConfigs[uuid].isCached) {
                     logger.warn("玩家{}信息没有缓存,正在更新...", name);
-                    getLocation(playerData.playerConfigs[uuid].ip, saveResults, uuid);
+                    getLocation(Gdata.playerConfigs[uuid].ip, saveResults, uuid);
                     
-                } else if (playerData.playerConfigs[uuid].ip != SplitIpPort(ipAndPort).first
-                           || playerData.playerConfigs[uuid].deviceName != deviceName
-                           || playerData.playerConfigs[uuid].realName != name) {
+                } else if (Gdata.playerConfigs[uuid].ip != SplitIpPort(ipAndPort).first
+                           || Gdata.playerConfigs[uuid].deviceName != deviceName
+                           || Gdata.playerConfigs[uuid].realName != name) {
                     logger.warn("玩家{}信息发生变化正在更新...", name);
                     getLocation(SplitIpPort(ipAndPort).first, saveResults, uuid);
                     

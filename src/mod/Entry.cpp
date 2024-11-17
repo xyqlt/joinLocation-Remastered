@@ -9,7 +9,7 @@
 #include <ll/api/mod/RegisterHelper.h>
 #include <memory>
 join_location::Config config;
-join_location::Data playerData;
+join_location::Data Gdata;
 ll::Logger            logger("joinLocation");
 namespace join_location {
 
@@ -20,11 +20,11 @@ Entry& Entry::getInstance() { return *instance; }
 bool Entry::load() {
     getSelf().getLogger().debug("Loadding config...");
     auto path = getSelf().getConfigDir() / "config.json";
-    auto path2 = getSelf().getConfigDir() / "playerConfig.json";
+    auto path2 = getSelf().getConfigDir() / "data.json";
     
     try {
         ll::config::loadConfig(config, path);
-        ll::config::loadConfig(playerData, path2);
+        ll::config::loadConfig(Gdata, path2);
     } catch (const std::exception& e) {
         logger.error("Failed to load config: {}", e.what());
         return false;

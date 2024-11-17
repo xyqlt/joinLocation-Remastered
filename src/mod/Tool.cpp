@@ -1,5 +1,6 @@
 #pragma once
 #include "Global.h"
+#include "Entry.h"
 #include <ll/api/chrono/GameChrono.h>
 #include <ll/api/schedule/Scheduler.h>
 #include <ll/api/schedule/Task.h>
@@ -31,7 +32,6 @@
 #include <mc/world/level/Level.h>
 
 
-#include <iphlpapi.h>
 #include <mc/deps/application/AppPlatform.h>
 #include <mc/entity/utilities/ActorType.h>
 #include <mc/server/commands/CommandContext.h>
@@ -39,7 +39,7 @@
 #include <mc/world/actor/player/Player.h>
 #include <winsock2.h>
 #include <ws2tcpip.h>
-
+#include <iphlpapi.h>
 
 #pragma comment(lib, "Ws2_32.lib")
 #pragma comment(lib, "Iphlpapi.lib")
@@ -127,6 +127,20 @@ bool isIP(const std::string& ip) {
     return std::regex_match(ip, reg);
 }
 
+bool isChangeDate(){
+    // 调用windows系统服务辨别是否是新的一天
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    if(Gdata.day != st.wDay||st.wMonth != Gdata.month||Gdata.year != st.wYear){
+        Gdata.day = st.wDay;
+        Gdata.month = st.wMonth;
+        Gdata.year = st.wYear;
+        ll::config::saveConfig(Gdata, join_location::Entry::getInstance().getSelf().getConfigDir() / "data.json");
+        return true;
+    }
+    return false;
+}
+
 std::string resolvesDomain(const std::string& domain) {
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -180,7 +194,6 @@ std::string resolvesDomain(const std::string& domain) {
         WSACleanup();
         return "";
     }
-
     // 接收 DNS 响应
     unsigned char responseBuffer[1024];
     sockaddr_in   from;

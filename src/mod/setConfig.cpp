@@ -1,4 +1,3 @@
-#include "Config.h"
 #include "Entry.h"
 #include "Global.h"
 #include <ll/api/Config.h>
@@ -18,14 +17,11 @@
 #include <mc/world/level/Level.h>
 
 void setPlayerConfig(mce::UUID& uuid, join_location::PlayerConfig& playerConfig) {
-    auto oldPlayerConfig = playerData.playerConfigs[uuid];
+    auto oldPlayerConfig = Gdata.playerConfigs[uuid];
     auto level           = ll::service::getLevel();
     if (!level.has_value()) return;
-    playerData.playerConfigs[uuid] = playerConfig;
-    ll::config::saveConfig(
-        playerData,
-        join_location::Entry::getInstance().getSelf().getConfigDir() / "playerConfig.json"
-    );
+    Gdata.playerConfigs[uuid] = playerConfig;
+    ll::config::saveConfig(Gdata, join_location::Entry::getInstance().getSelf().getConfigDir() / "data.json");
 }
 void setGlobalConfig(join_location::Config newConfig) {
     config.version               = newConfig.version;

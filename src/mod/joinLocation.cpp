@@ -209,13 +209,13 @@ bool displayNotice(mce::UUID& uuid) {
     if (!level.has_value()) return false;
     auto* player = level->getPlayer(uuid);
     if (!player) return false;
-    if (!playerData.playerConfigs[uuid].displayOthers) return false;
-    auto& playerConfig     = playerData.playerConfigs[uuid];
+    if (!Gdata.playerConfigs[uuid].displayOthers) return false;
+    auto& playerConfig     = Gdata.playerConfigs[uuid];
     auto& playerName       = playerConfig.realName;
     auto& playerDeviceName = playerConfig.deviceName;
     auto& playerLocation   = playerConfig.location;
     level->forEachPlayer([&](Player& player) -> bool {
-        if (!playerData.playerConfigs[player.getUuid()].disabledNotice) {
+        if (!Gdata.playerConfigs[player.getUuid()].disabledNotice) {
             logger.info("Display notice to {}", player.getRealName());
             if (config.enabledToast) {
                 ToastRequestPacket pkt = ToastRequestPacket(

@@ -4,6 +4,7 @@
 #include "fmt/core.h"
 #include "ll/api/service/Bedrock.h"
 #include "mc/deps/core/mce/UUID.h"
+#include "mod/Global.h"
 #include <ll/api/form/CustomForm.h>
 #include <mc/world/actor/player/Player.h>
 #include <mc/world/level/Level.h>
@@ -30,11 +31,13 @@ bool sendPlayerForm(mce::UUID& uuid) {
         form.appendToggle("enableQueryUrl", "是否以url查询");
         form.sendTo(
             *player,
-            [](Player& player, ll::form::CustomFormResult const& result, ll::form::FormCancelReason reason) -> void {
+            [level](Player& player, ll::form::CustomFormResult const& result, ll::form::FormCancelReason) -> void {
                 if (!result.has_value()) {
                     player.sendMessage("§c表单已放弃");
                     return;
                 }
+                 auto pl = level->getPlayer(std::get<std::string>(result->at("playerDropDown")));
+                 
             }
         );
 
@@ -56,11 +59,14 @@ bool sendConfigForm(mce::UUID& uuid) {
     form.appendToggle("enabledToast", "是否启用全局通知", config.enabledToast);
     form.appendToggle("enableCache", "是否启用缓存", config.enableCache);
     form.appendToggle("enableRegisterCommand", "是否启用注册命令", config.enableRegisterCommand);
+    form.appendToggle("enableWeatherService", "是否启用天气服务", config.enableWeatherService);
+    form.appendSlider("cacheTime", "缓存时间(天)", 1.00, 30.00,1.0,config.cacheTime);
+    form.appendInput("QweatherApiKey", "和风天气ApiKey（仅在开启天气服务时生效）", "ApiKey", config.QweatherApiKey);
     form.appendInput("command", "自定义命令", "自定义命令", config.command);
     form.appendInput("alias", "自定义别名", "自定义别名", config.alias);
     form.sendTo(
         *player,
-        [](Player& player, ll::form::CustomFormResult const& result, ll::form::FormCancelReason reason) -> void {
+        [](Player& player, ll::form::CustomFormResult const& result, ll::form::FormCancelReason) -> void {
             if (!result.has_value()) {
                 player.sendMessage("§c表单已放弃");
                 return;
@@ -72,6 +78,9 @@ bool sendConfigForm(mce::UUID& uuid) {
                 static_cast<bool>(std::get<uint64>(result->at("enabledToast"))),
                 static_cast<bool>(std::get<uint64>(result->at("enableCache"))),
                 static_cast<bool>(std::get<uint64>(result->at("enableRegisterCommand"))),
+                static_cast<bool>(std::get<uint64>(result->at("enableWeatherService"))),
+                static_cast<int>(std::get<double>(result->at("cacheTime"))),
+                std::get<std::string>(result->at("QweatherApiKey")),
                 std::get<std::string>(result->at("command")),
                 std::get<std::string>(result->at("alias"))
             });

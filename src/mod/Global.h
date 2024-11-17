@@ -10,7 +10,7 @@
 
 extern ll::Logger            logger;
 extern join_location::Config config;
-extern join_location::Data   playerData;
+extern join_location::Data   Gdata;
 extern void                  ListenerCall(bool enable);
 extern void                  getLocation(
                      std::string                                                           ip,
